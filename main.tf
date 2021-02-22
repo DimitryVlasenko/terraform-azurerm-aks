@@ -44,15 +44,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enabled = true
   }
 
-  network_profile {
-    network_plugin     = "azure"
-    service_cidr       = "10.2.0.0/24"
-    dns_service_ip     = "10.2.0.10"
-    docker_bridge_cidr = "172.17.0.1/16"
-    network_policy     = "calico"
-    load_balancer_sku  = "basic"
-  }
-
   service_principal {
     client_id     = "${var.sp_client_id}"
     client_secret = "${var.sp_client_secret}"
@@ -62,12 +53,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
     Environment = "${var.environment}"
     Network     = "azurecni"
     RBAC        = "true"
-    Policy      = "calico"
   }
 }
 resource "null_resource" "configure_cr" {
     provisioner "local-exec" {
-    command = "echo $ARM_CLIENT_ID && az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET -t $ARM_TENANT_ID && az extension add --name aks-preview && az aks update -n ${var.cluster_name} --attach-acr /subscriptions/${var.subscription_id}/resourceGroups/shared-rg/providers/Microsoft.ContainerRegistry/registries/${var.acr_name} --resource-group ${var.environment}-rg --subscription ${var.subscription_id}"
+    command = "echo $ARM_CLIENT_ID && az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET -t $ARM_TENANT_ID && az extension add --name aks-preview && az aks update -n ${var.cluster_name} --attach-acr /subscriptions/${var.subscription_id}/resourceGroups/${var.acr_resource_group_name}/providers/Microsoft.ContainerRegistry/registries/${var.acr_name} --resource-group ${var.environment}-rg --subscription ${var.subscription_id}"
   }
 depends_on = [azurerm_kubernetes_cluster.aks]
 }
