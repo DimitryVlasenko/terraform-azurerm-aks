@@ -108,3 +108,5 @@ variable "kubeconfig_filename" {
 }
 
 variable "acr_name" {}
+
+variable "acr_resource_group_name" {}
