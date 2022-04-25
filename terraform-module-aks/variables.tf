@@ -19,18 +19,8 @@ variable "agent_count_enable_autoscale" {
   default     = true
 }
 
-# create a service endpoint for Microsoft.SQL?
 variable "create_sql_service_endpoint" {
   default = false
-}
-
-# azure ad aks default user
-variable "aks_defaultuser" {
-  default = "mamelch"
-}
-
-variable "aks_defaultuser_ssh_public_key" {
-  description = "the public key of the aks default user for ssh access to the nodes."
 }
 
 variable "dns_prefix" {
@@ -73,11 +63,6 @@ variable aks_node_vm_size {
   default = "Standard_B2s"
 }
 
-# default tags applied to all resources
-variable "environment" {
-  default = "prod"
-}
-
 # Workaround for Windows machines
 variable "sleep_command" {
   description = "use timeout command for Windows machines"
@@ -107,6 +92,10 @@ variable "kubeconfig_filename" {
   default     = "bedrock_kube_config"
 }
 
-variable "acr_name" {}
+variable "container_registry_name" {
+  
+}
 
-variable "acr_resource_group_name" {}
+variable "azure_ad_managed" {}
+variable "azure_rbac_enabled" {}
+variable "admin_group_object_ids" {}
