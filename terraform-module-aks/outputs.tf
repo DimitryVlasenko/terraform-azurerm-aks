@@ -1,24 +1,26 @@
-output "id" {
-  value = azurerm_kubernetes_cluster.aks.id
-}
-
 output "aks_cluster_name" {
-  value = azurerm_kubernetes_cluster.aks.name
+  description = "The name of the AKS cluster"
+  value       = azurerm_kubernetes_cluster.aks.name
 }
 
-output "fqdn" {
-  value = azurerm_kubernetes_cluster.aks.fqdn
-}
-output "client_certificate" {
-  sensitive = true
-  value     = azurerm_kubernetes_cluster.aks.kube_config.0.client_certificate
+output "aks_cluster_id" {
+  description = "The ID of the AKS cluster"
+  value       = azurerm_kubernetes_cluster.aks.id
 }
 
 output "kube_config" {
-  sensitive = true
-  value     = azurerm_kubernetes_cluster.aks.kube_config_raw
+  description = "The Kubernetes configuration for the AKS cluster"
+  value       = azurerm_kubernetes_cluster.aks.kube_config_raw
+  sensitive   = true
 }
 
-output "kubeconfig_done" {
-  value = join("", local_file.cluster_credentials.*.id)
+output "service_principal_client_id" {
+  description = "The client ID of the service principal (auto-created or provided)"
+  value       = var.auto_service_principal ? azuread_service_principal.aks[0].client_id : var.service_principal_client_id
+}
+
+output "service_principal_password" {
+  description = "The password of the auto-created service principal (empty if provided by user)"
+  value       = var.auto_service_principal ? random_password.aks_sp_password[0].result : ""
+  sensitive   = true
 }

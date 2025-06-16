@@ -1,101 +1,130 @@
-
-variable "agent_count" {
-  description = "count of nodes in the AKS cluster, e.g. 2"
-  default     = 1
+variable "resource_group_name" {
+  description = "Name of the resource group"
+  type        = string
+  default     = "aks-rg"
 }
 
-variable "agent_count_min" {
-  description = "count of nodes in the AKS cluster, e.g. 2"
-  default     = 0
+variable "location" {
+  description = "Azure region for the resources"
+  type        = string
+  default     = "East US"
 }
 
-variable "agent_count_max" {
-  description = "count of nodes in the AKS cluster, e.g. 2"
-  default     = 10
+variable "cluster_name" {
+  description = "Name of the AKS cluster"
+  type        = string
+  default     = "aks-cluster"
 }
 
-variable "agent_count_enable_autoscale" {
-  description = "count of nodes in the AKS cluster, e.g. 2"
+variable "kubernetes_version" {
+  description = "Kubernetes version for the AKS cluster"
+  type        = string
+  default     = "1.29"
+}
+
+variable "node_count" {
+  description = "Number of nodes in the default node pool"
+  type        = number
+  default     = 3
+}
+
+variable "vm_size" {
+  description = "VM size for the default node pool"
+  type        = string
+  default     = "Standard_D2_v2"
+}
+
+variable "os_disk_size_gb" {
+  description = "Disk size for nodes in GB"
+  type        = number
+  default     = 30
+}
+
+variable "subnet_id" {
+  description = "Subnet ID for the AKS cluster"
+  type        = string
+}
+
+variable "max_pods" {
+  description = "Maximum number of pods per node"
+  type        = number
+  default     = 110
+}
+
+variable "enable_auto_scaling" {
+  description = "Enable auto-scaling for the node pool"
+  type        = bool
   default     = true
 }
 
-variable "create_sql_service_endpoint" {
-  default = false
+variable "min_count" {
+  description = "Minimum node count for auto-scaling"
+  type        = number
+  default     = 3
 }
 
-variable "dns_prefix" {
-  description = "DNS prefix for this AKS cluster"
+variable "max_count" {
+  description = "Maximum node count for auto-scaling"
+  type        = number
+  default     = 10
 }
 
-variable cluster_name {
-  description = "Name of the AKS cluster"
+variable "availability_zones" {
+  description = "Availability zones for the node pool"
+  type        = list(string)
+  default     = ["1", "2", "3"]
 }
 
-variable resource_group_name {
-  description = "Resource Group Name for AKS"
+variable "admin_group_object_ids" {
+  description = "Azure AD group object IDs for AKS admin access"
+  type        = list(string)
+  default     = []
 }
 
-variable "vnet_subnet_id" {
-  description = "subnet id"
-}
-
-variable vnet_name {
-  description = "VNET Name for AKS"
-}
-
-variable "sp_client_id" {
-  description = "The client id of the service principal"
-}
-
-variable "sp_client_secret" {
-  description = "The client secret of the service principal"
-}
-
-variable location {
-  default = "westeurope"
-}
-
-variable kubernetes_version {
-  default = "1.13.7"
-}
-
-variable aks_node_vm_size {
-  default = "Standard_B2s"
-}
-
-# Workaround for Windows machines
-variable "sleep_command" {
-  description = "use timeout command for Windows machines"
-  default     = "sleep"
-}
-variable "subscription_name" {
-  description = "subscription name"
-}
-variable "subscription_id" {
-  description = "subscription id"
-}
-variable "environment" {
-  description = "environment"
-}
-variable "kubeconfig_to_disk" {
-  description = "This disables or enables the kube config file from being written to disk."
+variable "service_cidr" {
+  description = "Service CIDR for AKS network"
   type        = string
-  default     = "true"
+  default     = "10.0.0.0/16"
 }
-variable "output_directory" {
-  type    = string
-  default = "./output"
-}
-variable "kubeconfig_filename" {
-  description = "Name of the kube config file saved to disk."
+
+variable "dns_service_ip" {
+  description = "DNS service IP for AKS"
   type        = string
-  default     = "bedrock_kube_config"
+  default     = "10.0.0.10"
 }
 
-variable "container_registry_name" {
-  
+variable "pod_cidr" {
+  description = "Pod CIDR for AKS network"
+  type        = string
+  default     = "10.244.0.0/16"
 }
 
-variable "azure_ad_managed" {}
-variable "azure_rbac_enabled" {}
-variable "admin_group_object_ids" {}
+variable "log_analytics_workspace_id" {
+  description = "Log Analytics workspace ID for monitoring"
+  type        = string
+}
+
+variable "tags" {
+  description = "Tags to apply to resources"
+  type        = map(string)
+  default     = {}
+}
+
+variable "auto_service_principal" {
+  description = "Enable automatic creation of service principal for AKS"
+  type        = bool
+  default     = false
+}
+
+variable "service_principal_client_id" {
+  description = "Client ID of the service principal when auto_service_principal is false"
+  type        = string
+  default     = ""
+}
+
+variable "service_principal_client_secret" {
+  description = "Client secret of the service principal when auto_service_principal is false"
+  type        = string
+  default     = ""
+  sensitive   = true
+}

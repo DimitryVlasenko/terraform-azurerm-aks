@@ -1,32 +1,57 @@
-data "azurerm_virtual_network" "your-vnet" {
-  name                = "your_vnet"
-  resource_group_name = "your_rg"
+# Example usage of the AKS module with automatic service principal creation
+module "aks_auto_sp" {
+  source                     = "./"
+  resource_group_name        = "my-aks-rg"
+  location                   = "East US"
+  cluster_name               = "my-aks-cluster-auto"
+  kubernetes_version         = "1.29"
+  node_count                 = 3
+  vm_size                    = "Standard_D2_v2"
+  os_disk_size_gb            = 30
+  subnet_id                  = "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Network/virtualNetworks/xxx/subnets/xxx"
+  max_pods                   = 110
+  enable_auto_scaling        = true
+  min_count                  = 3
+  max_count                  = 10
+  availability_zones         = ["1", "2", "3"]
+  admin_group_object_ids     = ["xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+  service_cidr               = "10.0.0.0/16"
+  dns_service_ip             = "10.0.0.10"
+  pod_cidr                   = "10.244.0.0/16"
+  log_analytics_workspace_id = "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.OperationalInsights/workspaces/xxx"
+  auto_service_principal     = true
+  tags                       = {
+    Environment = "Production"
+    Project     = "AKS-Deployment"
+  }
 }
-data "azurerm_subnet" "your-subnet" {
-  virtual_network_name = data.azurerm_virtual_network.your-vnet.name
-  name                 = "your_subnet"
-  resource_group_name  = "your_rg"
-}
-module "aks" {
-  source = "../terraform-module-aks"
 
-  aks_node_vm_size               = "standard_d2s_v3"
-  dns_prefix                     = "env"
-  cluster_name                   = "your_cluster"
-  resource_group_name            = "your_rg"
-  vnet_name                      = "your vnet name"
-  vnet_subnet_id                 = data.azurerm_subnet.your-subnet.id
-  location                       = "cloud_region"
-  agent_count_min                = 1
-  agent_count_max                = 3
-  agent_count_enable_autoscale   = true
-  kubernetes_version             = "1.21.9"
-  environment                    = "environment"
-  sp_client_id                   = "your existing SP id"
-  sp_client_secret               = "your existing client secret for SP"
-  subscription_id                = "your subscription id"
-  container_registry_name        = "your container registry name"
-  azure_ad_managed               = true
-  azure_rbac_enabled             = true
-  admin_group_object_ids         = "admin group object id"
+# Example usage of the AKS module with user-provided service principal
+module "aks_provided_sp" {
+  source                     = "./"
+  resource_group_name        = "my-aks-rg"
+  location                   = "East US"
+  cluster_name               = "my-aks-cluster-provided"
+  kubernetes_version         = "1.29"
+  node_count                 = 3
+  vm_size                    = "Standard_D2_v2"
+  os_disk_size_gb            = 30
+  subnet_id                  = "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Network/virtualNetworks/xxx/subnets/xxx"
+  max_pods                   = 110
+  enable_auto_scaling        = true
+  min_count                  = 3
+  max_count                  = 10
+  availability_zones         = ["1", "2", "3"]
+  admin_group_object_ids     = ["xxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+  service_cidr               = "10.0.0.0/16"
+  dns_service_ip             = "10.0.0.10"
+  pod_cidr                   = "10.244.0.0/16"
+  log_analytics_workspace_id = "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.OperationalInsights/workspaces/xxx"
+  auto_service_principal     = false
+  service_principal_client_id = "yyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy"
+  service_principal_client_secret = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+  tags                       = {
+    Environment = "Production"
+    Project     = "AKS-Deployment"
+  }
 }
